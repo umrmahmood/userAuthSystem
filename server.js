@@ -1,15 +1,16 @@
 import express from 'express';
-import 'dotenv/config';
+import dotenv from 'dotenv';
 import cors from 'cors';
 import mongoose from 'mongoose';
 
 const app = express();
 const PORT = process.env.PORT || 5001;
 
+dotenv.config()
 
 //middleware
 app.use(cors());
-app.use(express.urlencoded({extended : true}));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 //routes go here
