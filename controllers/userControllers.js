@@ -1,5 +1,4 @@
 // import Users from "../schemas/userSchema.js";
-import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from 'dotenv';
 
@@ -11,13 +10,12 @@ dotenv.config()
 export const signUpUser = async (req, res, next) => {
 	try {
 		let {
-			firstName,
-			lastName,
-			phoneNumber,
-			email,
-			address,
+			username,
 			password,
-			isAdmin,
+			email,
+			profile,
+			active,
+			role,
 		} = req.body;
 
 		// check for the existing user
@@ -30,18 +28,17 @@ export const signUpUser = async (req, res, next) => {
      
 		//if not then create a new user
 		let newUser = new Users({
-			firstName, 
-			lastName,
-			phoneNumber,
-			email,
-			address,
+			username,
 			password,
-			isAdmin,
+			email,
+			profile,
+			active,
+			role,
 		});
 
-		//before saving, hash the password
-		const salt = await bcrypt.genSalt(10);
-		newUser.password = await bcrypt.hash(password, salt);
+		//before saving, hash the password. This we have done in Schema with 'pre' method.
+		// const salt = await bcrypt.genSalt(10);
+		// newUser.password = await bcrypt.hash(password, salt);
 
 		//save user
 		await newUser.save();
@@ -51,8 +48,8 @@ export const signUpUser = async (req, res, next) => {
         //upon successful user creation, it will allow the client to authenticate subsequent requests.
 		const payload = {
 			id: newUser._id,
-			isAdmin,
-			name: `${newUser.firstName} ${newUser.lastName}`,
+			username: newUser.username,
+			role: newUser.role
 		};
 		const secretKey = process.env.SECRET_KEY;
 
@@ -74,3 +71,30 @@ export const signUpUser = async (req, res, next) => {
 	}
 };
 
+
+
+// Update user profile
+export const updateUser = async (req, res, next) => {
+    try {
+		const { id } = req.params; // Assuming we are passing user ID in the request URL
+        const updates = req.body; // Assuming updates are sent in the request body
+
+        // Find the user by ID and update it
+        const user = await Users.findByIdAndUpdate(id, updates, { new: true });
+
+        // If user doesn't exist, return an error
+        if (!user) {
+            const error = new Error("User not found");
+            error.status = 404;
+            throw error;
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "User updated successfully",
+            user: user
+        });
+    } catch (error) {
+        next(error); 
+    }
+};
