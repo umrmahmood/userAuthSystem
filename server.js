@@ -3,18 +3,20 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import mongoose from 'mongoose';
 
+import userRoutes from './routes/userRoutes.js'
+
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-dotenv.config()
+dotenv.config();
 
 //middleware
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-//routes go here
-// app.use('/', userRoutes)
+//routes
+app.use('/', userRoutes);
 
 //Global Error Handler for entire project, position is important. 
 //Global error should come after routes
@@ -35,4 +37,4 @@ mongoose.connect(process.env.MONGODB_URI).then(() => {
 })
 app.listen(PORT, () => {
     console.log(`The server is listening at port ${PORT}`);
-})
+});
