@@ -1,23 +1,25 @@
 import express from "express";
 import bcrypt from "bcrypt";
-import User from './models/user.js';
+import User from '../models/Users.js';
 
 const router = express.Router();
 
 //login endpoint
 
-router.post('/login', async (req, res, next) => {
+export const loginUser = async (req, res, next) => {
     try {
-        const { username, password } = req.body;
-        const user = await User.findOne({ username });
-        if (!user   || !(await bcrypt.compare( password, user.password))) {
-return res.status(401).json({ success:false, message:'Invalid username'})
+        const { email, password } = req.body;
+        const user = await User.findOne({ email });
+        if (!user){
+    return res.status(401).json({ success:false, message:'Invalid email'})
     }
-
+    const passwordMatch = await bcrypt.compare(password,user.password);
+    if (!passwordMatch){
+        return res.status(401).json({ success:false, message:'Invalid password'})
+    }
     res.status(200).json({success:true, message:'Login successful'});
  } catch(err) {
         next(err);
     }
-})
+}
 
-export default router;
