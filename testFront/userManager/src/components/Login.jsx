@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { GoogleLogin } from "react-google-login";
+import GithubLogin from "react-github-login";
 
 const Login = () => {
     const [username, setUsername] = useState('');
@@ -16,8 +17,10 @@ const Login = () => {
     };
 
     const onFailure = (res) => {
+        console.log(res);
         alert("Login failed");
     };
+
 
     return (
         <div>
@@ -42,7 +45,34 @@ const Login = () => {
                 </div>
                 <button type="submit">Login</button>
             </form>
-        </div>
+            <div>
+
+
+
+                <GoogleLogin
+                    clientId={"983437975986-hk1asuggkm1i6mg36t5gflhpjepsh9ht.apps.googleusercontent.com"}
+                    buttonText="Google Login"
+                    onSuccess={onSuccess}
+                    onFailure={onFailure}
+                />
+                <br />
+                <GithubLogin
+                    clientId={"a80b12d7481f823057b1"}
+                    buttonText={"GITLOGIN"}
+                    onSuccess={onSuccess}
+                    onFailure={onFailure}
+                />
+
+
+
+                {/* 
+                <MicrosoftLogin></MicrosoftLogin>
+                <FacebookLogin></FacebookLogin>
+                <TwitterLogin></TwitterLogin> */}
+            </div >
+        </div >
 
     )
-}
+};
+
+export default Login;
