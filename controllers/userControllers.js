@@ -1,22 +1,14 @@
 import Users from "../models/Users.js";
 import jwt from "jsonwebtoken";
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
+import bcrypt from "bcrypt";
 
-dotenv.config()
-
-
+dotenv.config();
 
 //signup user
 export const signUpUser = async (req, res, next) => {
 	try {
-		let {
-			username,
-			password,
-			email,
-			profile,
-			active,
-			role,
-		} = req.body;
+		let { username, password, email, profile, active, role } = req.body;
 
 		// check for the existing user
 		const existingUser = await Users.findOne({ email });
@@ -25,7 +17,7 @@ export const signUpUser = async (req, res, next) => {
 			error.status = 400;
 			throw error;
 		}
-     
+
 		//if not then create a new user
 		let newUser = new Users({
 			username,
@@ -43,19 +35,17 @@ export const signUpUser = async (req, res, next) => {
 		//save user
 		await newUser.save();
 
-
 		//before sending the response we generate a JWT token to be sent to user
-        //upon successful user creation, it will allow the client to authenticate subsequent requests.
+		//upon successful user creation, it will allow the client to authenticate subsequent requests.
 		const payload = {
 			id: newUser._id,
 			username: newUser.username,
-			role: newUser.role
+			role: newUser.role,
 		};
 		const secretKey = process.env.SECRET_KEY;
 
-
-        //This function generates a JWT(json web token) 
-        //its last argument is a callback, which is invoked once the token is generated. 
+		//This function generates a JWT(json web token)
+		//its last argument is a callback, which is invoked once the token is generated.
 		jwt.sign(payload, secretKey, { expiresIn: "1hr" }, (err, token) => {
 			if (err) {
 				next(err);
@@ -71,34 +61,31 @@ export const signUpUser = async (req, res, next) => {
 	}
 };
 
-
-
 // Update user profile
 export const updateUser = async (req, res, next) => {
-    try {
+	try {
 		const { id } = req.params; // Assuming we are passing user ID in the request URL
-        const updates = req.body; // Assuming updates are sent in the request body
+		const updates = req.body; // Assuming updates are sent in the request body
 
-        // Find the user by ID and update it
-        const user = await Users.findByIdAndUpdate(id, updates, { new: true });
+		// Find the user by ID and update it
+		const user = await Users.findByIdAndUpdate(id, updates, { new: true });
 
-        // If user doesn't exist, return an error
-        if (!user) {
-            const error = new Error("User not found");
-            error.status = 404;
-            throw error;
-        }
+		// If user doesn't exist, return an error
+		if (!user) {
+			const error = new Error("User not found");
+			error.status = 404;
+			throw error;
+		}
 
-        res.status(200).json({
-            success: true,
-            message: "User updated successfully",
-            user: user
-        });
-    } catch (error) {
-        next(error); 
-    }
+		res.status(200).json({
+			success: true,
+			message: "User updated successfully",
+			user: user,
+		});
+	} catch (error) {
+		next(error);
+	}
 };
-
 
 //get all users
 export const getAllUsers = async (req, res, next) => {
@@ -116,26 +103,44 @@ export const getAllUsers = async (req, res, next) => {
 	}
 };
 
+//get one user
+export const getUserById = async (req, res, next) => {
+	try {
+		const userId = req.params.id;
+		const user = await Users.findById(userId);
+		if (!user) {
+			const error = new Error("User not found!");
+			error.status = 404;
+			throw error;
+		} else {
+			res.send(user);
+		}
+	} catch (err) {
+		next(err); // Pass the error to the global error handler
+	}
+};
 
 //delete user
 export const deleteUser = async (req, res, next) => {
-    try {
-        const userId = req.params.id; // Get the user ID from the request parameters
+	try {
+		const userId = req.params.id; // Get the user ID from the request parameters
 
-        // Find the user by ID and delete it
-        const deletedUser = await Users.findByIdAndDelete(userId);
+		// Find the user by ID and delete it
+		const deletedUser = await Users.findByIdAndDelete(userId);
 
-        // If no user found, return 404
-        if (!deletedUser) {
-            const error = new Error("User not found");
-            error.status = 404;
-            throw error;
-        }
+		// If no user found, return 404
+		if (!deletedUser) {
+			const error = new Error("User not found");
+			error.status = 404;
+			throw error;
+		}
 
-        // If user is successfully deleted, send a success response
-        res.status(200).json({ message: "Following User deleted successfully", deletedUser });
-    } catch (err) {
-        // Handle errors
-        next(err); // Pass the error to the global error handler
-    }
+		// If user is successfully deleted, send a success response
+		res
+			.status(200)
+			.json({ message: "Following User deleted successfully", deletedUser });
+	} catch (err) {
+		// Handle errors
+		next(err); // Pass the error to the global error handler
+	}
 };

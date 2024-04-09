@@ -4,7 +4,7 @@ import Signup from './components/Signup.jsx';
 import AdminPage from './components/Admin.jsx';
 import Login from './components/Login.jsx';
 import Logout from './components/Logout.jsx';
-import Profile from './components/Profile.jsx';
+import { Profile } from './components/Profile.jsx';
 import { useState } from 'react';
 
 
@@ -33,6 +33,7 @@ function App() {
           </ul>
         </nav>
       </header>
+      <Profile/>
 
       <Routes>
         <Route path="/" element={isLoggedIn ? <Profile /> : <Login />}></Route>
