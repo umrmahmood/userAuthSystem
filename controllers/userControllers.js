@@ -1,4 +1,4 @@
-// import Users from "../schemas/userSchema.js";
+import Users from "../models/Users.js";
 import jwt from "jsonwebtoken";
 import dotenv from 'dotenv';
 
@@ -96,5 +96,46 @@ export const updateUser = async (req, res, next) => {
         });
     } catch (error) {
         next(error); 
+    }
+};
+
+
+//get all users
+export const getAllUsers = async (req, res, next) => {
+	try {
+		const result = await Users.find();
+		if (!result.length) {
+			const error = new Error("No user found!");
+			error.status = 404;
+			throw error; // Throw the error to trigger the global error handler
+		} else {
+			res.send(result);
+		}
+	} catch (err) {
+		next(err); // Pass the error to the global error handler
+	}
+};
+
+
+//delete user
+export const deleteUser = async (req, res, next) => {
+    try {
+        const userId = req.params.id; // Get the user ID from the request parameters
+
+        // Find the user by ID and delete it
+        const deletedUser = await Users.findByIdAndDelete(userId);
+
+        // If no user found, return 404
+        if (!deletedUser) {
+            const error = new Error("User not found");
+            error.status = 404;
+            throw error;
+        }
+
+        // If user is successfully deleted, send a success response
+        res.status(200).json({ message: "Following User deleted successfully", deletedUser });
+    } catch (err) {
+        // Handle errors
+        next(err); // Pass the error to the global error handler
     }
 };
