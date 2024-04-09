@@ -48,7 +48,7 @@ function App() {
 
       <Routes>
         <Route path="/" element={isLoggedIn ? <Profile /> : <Login navigate={navigate} isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />}></Route>
-        <Route path="/create-user" element={<Signup />}></Route>
+        <Route path="/create-user" element={<Signup navigate={navigate} />}></Route>
         <Route path="/admin-area" element={<AdminPage />}></Route>
         <Route path="/logged-out" element={<Logout />}></Route>
         {/* if possible make a redirect to Homepage after 5 sec.  */}
