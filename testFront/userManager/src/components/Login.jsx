@@ -12,11 +12,11 @@ const Login = ({ navigate, isLoggedIn, setIsLoggedIn }) => {
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post("http://localhost:5001/user/login", { credential, password });
+            const response = await axios.post("http://localhost:5000/user/login", { email: credential, username: credential, password });
             const token = response.data.token;
             localStorage.setItem("token", token);
             setIsLoggedIn(true);
-            navigate({ pathname: "/", state: { isLoggedIn: true } });
+            navigate("/");
         } catch (error) {
             console.log("login failed", error);
         }
@@ -42,18 +42,18 @@ const Login = ({ navigate, isLoggedIn, setIsLoggedIn }) => {
         <div>
             <form onSubmit={handleLogin}>
                 <div>
-                    <label>Email/Username:</label>
                     <input
                         type="text"
+                        placeholder="Username or Email"
                         id="credential"
                         value={credential}
                         onChange={(e) => setCredential(e.target.value)}
                     />
                 </div>
                 <div>
-                    <label>password:</label>
                     <input
                         type="password"
+                        placeholder="Password"
                         id="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
