@@ -41,7 +41,7 @@ export const AdminPage = () => {
                 <div>username: {user.username}</div>
                 <div>{user.email}</div>
                 <div>Address: {user.profile.address.street1}</div>
-                <button onClick={() => deleteHandler(user.id)}>delete</button>
+                <button onClick={() => deleteHandler(user._id)}>delete</button>
             </div>
         </li>
     ));
