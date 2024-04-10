@@ -5,6 +5,40 @@ import bcrypt from "bcrypt";
 
 dotenv.config();
 
+// google login controller
+export const googleLoginHandler = async (req, res, next) => {
+	try {
+		const { email } = req.params.email;
+
+		// Check if a user with the provided email exists in the database
+		let user = await Users.findOne({ email });
+
+		if (!user) {
+			// If user doesn't exist, create a new user
+			user = new Users({ email });
+			await user.save();
+		}
+
+		// Generate a token for the user
+		const token = generateToken(user);
+
+		// Send the token and user data in the response
+		return res.status(200).json({ success: true, token, user });
+	} catch (error) {
+		next(error);
+	}
+};
+
+const generateToken = (user) => {
+	const payload = {
+		id: user._id,
+		email: user.email,
+		// Include any other relevant user data in the payload
+	};
+	const secretKey = process.env.SECRET_KEY;
+	return jwt.sign(payload, secretKey, { expiresIn: "1hr" });
+};
+
 //signup user
 export const signUpUser = async (req, res, next) => {
 	try {
