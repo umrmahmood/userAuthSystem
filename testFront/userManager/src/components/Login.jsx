@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { GoogleLogin } from "react-google-login";
-import GithubLogin from "react-github-login";
+//import GithubLogin from "react-github-login";
 import axios from "axios";
 
 
-const Login = ({ navigate, isLoggedIn, setIsLoggedIn }) => {
+const Login = ({ navigate, isLoggedIn, setIsLoggedIn, userRole, setUserRole }) => {
     // const [username, setUsername] = useState('');
     const [credential, setCredential] = useState('');
     const [password, setPassword] = useState('');
@@ -12,10 +12,14 @@ const Login = ({ navigate, isLoggedIn, setIsLoggedIn }) => {
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post("http://localhost:5000/user/login", { email: credential, username: credential, password });
-            const token = response.data.token;
+            const response = await axios.post("/api/user/login", { email: credential, username: credential, password });
+            const { token, user } = response.data;
+            console.log(response);
             localStorage.setItem("token", token);
+            localStorage.setItem("role", user.role);
+            localStorage.setItem("userId", user._id);
             setIsLoggedIn(true);
+            setUserRole(localStorage.getItem("role"));
             navigate("/");
         } catch (error) {
             console.log("login failed", error);
@@ -34,7 +38,6 @@ const Login = ({ navigate, isLoggedIn, setIsLoggedIn }) => {
 
     const onFailure = (res) => {
         console.log(res);
-        alert("Login failed");
     };
 
 
@@ -63,18 +66,18 @@ const Login = ({ navigate, isLoggedIn, setIsLoggedIn }) => {
             </form>
             <div>
                 <GoogleLogin
-                    clientId={"983437975986-hk1asuggkm1i6mg36t5gflhpjepsh9ht.apps.googleusercontent.com"}
+                    clientId={"135873137906-mvdousn5i0onq1mndi4kgbrm155rst51.apps.googleusercontent.com"}
                     buttonText="Google Login"
                     onSuccess={onSuccess}
                     onFailure={onFailure}
                 />
                 <br />
-                <GithubLogin
+                {/* <GithubLogin
                     clientId={"a80b12d7481f823057b1"}
                     buttonText={"GitHub Login"}
                     onSuccess={onSuccess}
                     onFailure={onFailure}
-                />
+                /> */}
                 {/* 
                 <MicrosoftLogin></MicrosoftLogin>
                 <FacebookLogin></FacebookLogin>

@@ -1,47 +1,40 @@
+import jwt from 'jsonwebtoken';
 import express from "express";
 import bcrypt from "bcrypt";
 import Users from '../models/Users.js';
-
 const router = express.Router();
-
-//login endpoint
 export const loginUser = async (req, res, next) => {
     try {
         const { email, password, username } = req.body;
         // Check if a user with the provided email exists in the database
         const userByEmail = await Users.findOne({ email });
-        if (!userByEmail) {
-            // If no user found with the provided email, check with username
-            const userByUsername = await Users.findOne({ username });
-            if (!userByUsername) {
-                // If no user found with the provided username or email, return error
-                return res.status(401).json({ message: "Invalid credentials" });
-            }
-            // If a user is found with the provided username, proceed with authentication
-            const passwordMatch = await bcrypt.compare(
-                password,
-                userByUsername.password
-            );
-            if (!passwordMatch) {
-                return res
-                    .status(401)
-                    .json({ success: false, message: "Invalid password" });
-            }
-            res.status(200).json({ success: true, message: "Login successful" });
-        } else {
-            // If a user is found with the provided email, proceed with authentication
-            const passwordMatch = await bcrypt.compare(
-                password,
-                userByEmail.password
-            );
-            if (!passwordMatch) {
-                return res
-                    .status(401)
-                    .json({ success: false, message: "Invalid password" });
-            }
-            res.status(200).json({ success: true, message: "Login successful" });
+        const user = userByEmail || await Users.findOne({ username }); // Combine the search for email and username
+        if (!user) {
+            return res.status(401).json({ message: "Invalid credentials" });
         }
-        // Generate and send token upon successful authentication...
+        // If a user is found, proceed with authentication
+        const passwordMatch = await bcrypt.compare(password, user.password);
+        if (!passwordMatch) {
+            return res.status(401).json({ success: false, message: "Invalid password" });
+        }
+        // Generate and send token upon successful authentication
+        const payload = {
+            id: user._id,
+            isAdmin: user.role === "admin",
+            name: `${user.profile.firstName} ${user.profile.lastName}`,
+        };
+        const secretKey = process.env.SECRET_KEY;
+        jwt.sign(payload, secretKey, { expiresIn: "1hr" }, (err, token) => {
+            if (err) {
+                return next(err);
+            }
+            return res.status(200).send({
+                success: true,
+                message: "User is logged in",
+                token,
+                user
+            });
+        });
     } catch (error) {
         next(error);
     }
