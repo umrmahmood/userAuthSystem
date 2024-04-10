@@ -34,27 +34,29 @@ function App() {
   };
 
   return (
-    <div className='App'>
-      <header>
-        <nav>
-          <ul>
-            <li><Link to="/" activeStyle="active">Home</Link></li>
-            <li><Link to="/create-user" activeStyle="active">Signup</Link></li>
-            {userRole === "admin" ? (<li><Link to="/admin-area" activeStyle="active">Admin Page</Link></li>) : null}
-            {isLoggedIn ? (<li><Link to="/logged-out" activeStyle="active" onClick={handleLogout}>Logout</Link></li>) : null}
-          </ul>
-        </nav>
-      </header>
+    <div style={{ display: 'flex', justifyContent: 'center', minHeight: '100vh', alignItems: 'center' }}>
+      <div className='App' style={{ width: '400px', border: '1px solid #ccc', borderRadius: '5px', padding: '20px' }}>
+        <header style={{ padding: '10px 0' }}>
+          <nav style={{ textAlign: 'center' }}>
+            <Link to="/" style={{ color: 'black', marginRight: '20px', textDecoration: 'none' }}>Home</Link>
+            <Link to="/create-user" style={{ color: 'black', marginRight: '20px', textDecoration: 'none' }}>Signup</Link>
+            {userRole === "admin" && <Link to="/admin-area" style={{ color: 'black', marginRight: '20px', textDecoration: 'none' }}>Admin Page</Link>}
+            {isLoggedIn && <Link to="/logged-out" style={{ color: 'black', marginRight: '20px', textDecoration: 'none' }} onClick={handleLogout}>Logout</Link>}
+          </nav>
+        </header>
 
-      <Routes>
-        <Route path="/" element={isLoggedIn ? <Profile /> : <Login navigate={navigate} isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} userRole={userRole} setUserRole={setUserRole} />}></Route>
-        <Route path="/create-user" element={<Signup navigate={navigate} />}></Route>
-        <Route path="/admin-area" element={<AdminPage />}></Route>
-        <Route path="/logged-out" element={<Logout />}></Route>
-      </Routes>
-
+        <div>
+          <Routes>
+            <Route path="/" element={isLoggedIn ? <Profile /> : <Login navigate={navigate} isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} userRole={userRole} setUserRole={setUserRole} />}></Route>
+            <Route path="/create-user" element={<Signup navigate={navigate} />}></Route>
+            <Route path="/admin-area" element={<AdminPage />}></Route>
+            <Route path="/logged-out" element={<Logout />}></Route>
+          </Routes>
+        </div>
+      </div>
     </div>
   )
+
 
 }
 

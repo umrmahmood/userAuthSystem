@@ -7,6 +7,7 @@ body {
   font-weight: 400;
   font-style: normal;
 }
+
 nav a.active {
   background-color: #eee;
 }
@@ -27,6 +28,7 @@ nav a {
   display: inline-block;
   padding: 1rem;
 }
+
 .main {
   padding: 1rem;
 }
@@ -36,7 +38,7 @@ nav a {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
- 
+
 }
 
 
@@ -51,11 +53,11 @@ nav a {
 }
 
 img {
-  width:150px;
-   height:150px;
-   border-radius: 50%;
-   border: solid 1px gray;
-   margin-top: 1em;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  border: solid 1px gray;
+  margin-top: 1em;
 
 }
 
