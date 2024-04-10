@@ -1,7 +1,7 @@
 import express from "express";
 
 import authN from "../middleware/authN.js";
-import { signUpUser, updateUser, getUserById, getAllUsers, deleteUser } from "../controllers/userControllers.js";
+import { signUpUser, updateUser, getUserById, getAllUsers, deleteUser, googleLoginHandler } from "../controllers/userControllers.js";
 import { loginUser } from "../logFunction/login.js"
 import { logoutUser } from "../logFunction/logout.js";
 
@@ -21,4 +21,7 @@ router.route("/user").get(getAllUsers);
 router.route("/user/:id").delete(deleteUser)
 
 router.route("/user/logout").post(logoutUser);
+
+router.route("/user/google-login").post(googleLoginHandler);
+
 export default router;

@@ -29,7 +29,7 @@ const Signup = ({ navigate }) => {
                 email,
                 profile
             };
-            const response = await axios.post("/user/register", newUser);
+            const response = await axios.post("api/user/register", newUser);
             console.log(response.data);
             setShowSuccessMessage(true);
             resetForm();

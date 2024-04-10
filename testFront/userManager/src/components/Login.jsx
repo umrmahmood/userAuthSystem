@@ -26,14 +26,21 @@ const Login = ({ navigate, isLoggedIn, setIsLoggedIn, userRole, setUserRole }) =
         }
     };
 
-    const onSuccess = (res) => {
-        console.log(res);
-        // alert(`Welcome ${res.profileObj.name}`);
-        localStorage.setItem("profile", JSON.stringify({ res }));
-
-        setIsLoggedIn(true);
-        navigate("/");
-
+    const onSuccess = async (res) => {
+        try {
+            const email = res.profileObj.email;
+            const response = await axios.post("http://localhost:5000/user/google-login", { email });
+            const { token, user } = response.data;
+            console.log(response);
+            localStorage.setItem("token", token);
+            localStorage.setItem("role", user.role);
+            localStorage.setItem("userId", user._id);
+            setIsLoggedIn(true);
+            setUserRole(localStorage.getItem("role"));
+            navigate("/");
+        } catch (error) {
+            console.log("Google login failed", error);
+        }
     };
 
     const onFailure = (res) => {
