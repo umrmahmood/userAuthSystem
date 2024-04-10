@@ -1,18 +1,19 @@
+
 import express from "express";
-
-import authN from "../middleware/authN.js";
-import { signUpUser } from "../controllers/userControllers.js";
+import { loginUser } from "../controllers/authControllers.js";
+import authMiddleware from "../middleware/authMiddleware.js";
 import { updateUser } from "../controllers/userControllers.js";
-import { loginUser } from "../logFunction/login.js"
-
+import isAdmin from "../middleware/isAdmin.js"; // Import isAdmin middleware
 
 const router = express.Router();
 
-router.route("/user/register").post(signUpUser);
+// Route for user login
+router.post("/login", loginUser);
 
-router.route("/user/:id").put(authN, updateUser);
+// Protected route - Only authenticated users can access
+router.put("/user/:id", authMiddleware, updateUser);
 
-router.route("/user/login").post(loginUser);
-
+// Protected route - Only admins can access
+router.put("/admin/update/:id", authMiddleware, isAdmin, updateUser);
 
 export default router;
